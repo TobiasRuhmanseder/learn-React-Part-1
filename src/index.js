@@ -69,16 +69,23 @@ function Header() {
 }
 
 function Menu() {
+    const pizzas = pizzaData;
+    // const pizzas = [];
+    const numPizzas = pizzas.length;
+
+
     return (
         <main className='menu'>
             <h2>Our menu</h2>
-            <ul className='pizzas'>
-                {pizzaData.map((pizza) => (
-                    <Pizza pizzaObj={pizza} key={pizza.name} />
-                ))}
-            </ul>
-            {/* <Pizza name='Pizza Spinaci' ingredients='Tomato' photoName="pizzas/spinaci.jpg" price={10} /> */}
-
+            {numPizzas > 0 ? (
+                <ul className='pizzas'>
+                    {pizzas.map((pizza) => (
+                        <Pizza pizzaObj={pizza} key={pizza.name} />
+                    ))}
+                </ul>
+            ) : (
+                <p>We‘re still working on our menu. Please come back later :)</p>
+            )}
         </main>
     );
 }
@@ -87,32 +94,36 @@ function Footer() {
     const hour = new Date().getHours();
     const openHour = 12;
     const closeHour = 22;
-    const isOpen = hour >= openHour && hour <= closeHour;
-    const [time, setTime] = useState(new Date().toLocaleTimeString())
-
-    useEffect(() => {
-        const inverval = setInterval(() => {
-            setTime(new Date().toLocaleTimeString());
-        }, 1000);
-
-        return () => clearInterval(inverval);
-    }, []);
+    const isOpen = hour >= openHour && hour < closeHour;
 
     return (
         <footer className='footer'>
-            {time}. We‘re currently {isOpen ? "open" : "closed"}!
+            {isOpen ? (
+                <div className='order'>
+                    <p>
+                        We‘re open until {closeHour}:00. Come visit us or order online.
+                    </p>
+                    <button className='btn'>Order</button>
+                </div>
+            ) : (
+                <p>We‘re happy to welcome you between {openHour}:00 and {closeHour}:00.</p>
+            )}
         </footer>
     );
 }
 
 function Pizza(probs) {
-    console.log(probs)
+
+    if (probs.pizzaObj.soldOut) return null;
+
+
     return (
         <li className='pizza'>
             <div>
                 <img src={probs.pizzaObj.photoName} alt={probs.pizzaObj.name}></img>
                 <h3>{probs.pizzaObj.name}</h3>
                 <p>{probs.pizzaObj.ingredients}</p>
+                <span>{probs.pizzaObj.price}</span>
             </div>
         </li>
     );
